@@ -1,5 +1,5 @@
 @echo off
-set "NUTSTORE_DB=%USERPROFILE%\Nutstore Files\kb\kb.db"
+set "NUTSTORE_DB=%USERPROFILE%\Nutstore Files\我的坚果云\kb\kb.db"
 
 if exist "%NUTSTORE_DB%" (
     echo 使用坚果云同步数据库: %NUTSTORE_DB%

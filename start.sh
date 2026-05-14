@@ -1,6 +1,6 @@
 #!/bin/bash
 # 坚果云同步数据库路径
-NUTSTORE_DB="$HOME/Nutstore Files/kb/kb.db"
+NUTSTORE_DB="$HOME/Nutstore Files/我的坚果云/kb/kb.db"
 
 if [ ! -f "$NUTSTORE_DB" ]; then
     echo "未找到同步数据库，使用本地数据库"
