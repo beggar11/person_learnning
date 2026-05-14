@@ -51,3 +51,9 @@ def test_graph_api(client):
 def test_note_not_found(client):
     resp = client.get("/note/nonexistent-12345")
     assert resp.status_code == 404
+
+def test_tag_page(client):
+    client.post("/api/notes", data={"title": "Tagged", "content": "Test", "tags": "python"})
+    resp = client.get("/tag/python")
+    assert resp.status_code == 200
+    assert "Tagged" in resp.text
