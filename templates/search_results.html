@@ -1,20 +1,26 @@
 {% extends "base.html" %}
 {% block title %}搜索: {{ query }} - Knowledge Base{% endblock %}
 {% block content %}
-<h2 style="margin-bottom: 20px;">搜索: "{{ query }}"</h2>
+
+<div class="topbar">
+    <h2>搜索: "{{ query }}"</h2>
+    <form action="/search" method="get" class="topbar-search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" name="q" placeholder="搜索笔记..." value="{{ query or '' }}">
+    </form>
+</div>
 
 {% if results %}
 <div class="search-results">
     {% for r in results %}
     <a href="/note/{{ r.slug }}" class="search-result">
         <h3>{{ r.title_hl | safe if r.title_hl else r.title }}</h3>
-        <p style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">
-            {% if r.content_hl %}{{ r.content_hl | safe }}{% endif %}
-        </p>
+        {% if r.content_hl %}<p>{{ r.content_hl | safe }}</p>{% endif %}
     </a>
     {% endfor %}
 </div>
 {% elif query %}
 <div class="empty">没有找到匹配 "{{ query }}" 的结果</div>
 {% endif %}
+
 {% endblock %}
