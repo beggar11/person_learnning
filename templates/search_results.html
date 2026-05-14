@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}搜索: {{ query }} - Knowledge Base{% endblock %}
+{% block content %}
+<h2 style="margin-bottom: 20px;">搜索: "{{ query }}"</h2>
+
+{% if results %}
+<div class="search-results">
+    {% for r in results %}
+    <a href="/note/{{ r.slug }}" class="search-result">
+        <h3>{{ r.title_hl | safe if r.title_hl else r.title }}</h3>
+        <p style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">
+            {% if r.content_hl %}{{ r.content_hl | safe }}{% endif %}
+        </p>
+    </a>
+    {% endfor %}
+</div>
+{% elif query %}
+<div class="empty">没有找到匹配 "{{ query }}" 的结果</div>
+{% endif %}
+{% endblock %}

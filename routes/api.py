@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Request, Form, HTTPException
+from fastapi import APIRouter, Request, Form, HTTPException, Depends
 from database import get_db
 from services.notes import create_note, get_note_by_id, get_all_notes, update_note, delete_note
 from services.links import sync_links
@@ -15,8 +15,8 @@ def api_save_note(
     slug: str = Form(None),
     note_id: int = Form(None),
     tags: str = Form(""),
+    db = Depends(get_db),
 ):
-    db = next(get_db())
     if note_id:
         note = get_note_by_id(db, note_id)
         if note is None:
@@ -33,21 +33,18 @@ def api_save_note(
 
 
 @router.get("/notes")
-def api_list_notes(tag: str = None):
-    db = next(get_db())
+def api_list_notes(tag: str = None, db = Depends(get_db)):
     notes = get_all_notes(db, tag=tag)
     return {"notes": notes}
 
 
 @router.get("/graph")
-def api_graph(limit: int = 200):
-    db = next(get_db())
+def api_graph(limit: int = 200, db = Depends(get_db)):
     return get_graph_data(db, limit=limit)
 
 
 @router.post("/notes/{note_id}/delete")
-def api_delete(note_id: int):
-    db = next(get_db())
+def api_delete(note_id: int, db = Depends(get_db)):
     deleted = delete_note(db, note_id)
     if not deleted:
         raise HTTPException(status_code=404, detail="Note not found")

@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}{{ tag_name or '首页' }} - Knowledge Base{% endblock %}
+{% block content %}
+<h2 style="margin-bottom: 20px;">{% if tag_name %}#{{ tag_name }}{% else %}最近笔记{% endif %}</h2>
+
+{% if tags %}
+<div class="tag-cloud" style="margin-bottom: 24px;">
+    {% for t in tags %}
+    <a href="/tag/{{ t.slug }}" class="tag">{{ t.name }}</a>
+    {% endfor %}
+</div>
+{% endif %}
+
+{% if notes %}
+<div class="note-list">
+    {% for note in notes %}
+    <a href="/note/{{ note.slug }}" class="note-item">
+        <h3>{{ note.title }}</h3>
+        <span class="meta">{{ note.updated_at[:10] }}{% if not note.content %} · 草稿{% endif %}</span>
+    </a>
+    {% endfor %}
+</div>
+{% else %}
+<div class="empty">还没有笔记，<a href="/note/new">写一篇</a></div>
+{% endif %}
+{% endblock %}
