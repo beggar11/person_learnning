@@ -1,8 +1,8 @@
 import sqlite3
-from config import DB_PATH
+import config
 
 def get_db() -> sqlite3.Connection:
-    conn = sqlite3.connect(str(DB_PATH))
+    conn = sqlite3.connect(str(config.DB_PATH))
     conn.row_factory = sqlite3.Row
     conn.execute("PRAGMA journal_mode=WAL")
     conn.execute("PRAGMA foreign_keys=ON")
