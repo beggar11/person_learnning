@@ -16,6 +16,7 @@ def _tokenize(text: str) -> str:
     """
     if not text:
         return ""
+    text = text.lower()
     tokens = list(jieba.cut(text))
     tokens += list(jieba.cut_for_search(text))
     # Deduplicate while preserving order
