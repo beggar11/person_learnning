@@ -2,20 +2,17 @@
 {% block title %}{% if note %}编辑 {{ note.title }}{% else %}新建笔记{% endif %} - Knowledge Base{% endblock %}
 {% block content %}
 
+<div class="topbar">
+    <h2>{% if note %}编辑笔记{% else %}新建笔记{% endif %}</h2>
+</div>
+
 <div class="editor-wrapper">
-    <h2 style="margin-bottom: 20px;">{% if note %}编辑{% else %}新建{% endif %}笔记</h2>
-    <form id="note-form">
+    <form id="note-form" style="display: contents;">
         {% if note %}<input type="hidden" name="note_id" value="{{ note.id }}">{% endif %}
-        <div style="margin-bottom: 12px;">
-            <input type="text" name="title" placeholder="标题" value="{{ note.title if note else '' }}"
-                   style="width: 100%; padding: 10px 14px; border: 1px solid var(--border); border-radius: var(--radius); font-size: 18px;">
-        </div>
+        <input type="text" name="title" placeholder="标题" value="{{ note.title if note else '' }}" class="editor-title">
+        <input type="text" name="tags" placeholder="标签（逗号分隔）" value="{{ note_tags if note_tags else '' }}" class="editor-tags">
         <textarea id="editor-textarea" name="content">{{ note.content if note else '' }}</textarea>
-        <div style="margin-bottom: 12px; margin-top: 12px;">
-            <input type="text" name="tags" placeholder="标签（逗号分隔）" value="{{ note_tags if note_tags else '' }}"
-                   style="width: 100%; padding: 8px 14px; border: 1px solid var(--border); border-radius: var(--radius); font-size: 14px;">
-        </div>
-        <div style="margin-top: 16px;">
+        <div class="editor-actions">
             <button type="button" id="save-btn" class="btn">保存</button>
             {% if note %}
             <a href="/note/{{ note.slug }}" class="btn btn-ghost">取消</a>
