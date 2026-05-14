@@ -1,4 +1,5 @@
-from services.links import extract_links, sync_links, get_backlinks
+from services.links import extract_links, get_all_links, get_backlinks, sync_links
+from services.notes import create_note
 
 
 def test_extract_links():
@@ -19,7 +20,6 @@ def test_extract_links_no_links():
 
 
 def test_sync_links_creates_placeholders(db):
-    from services.notes import create_note
     create_note(db, title="Source", content="Link to [[target-slug]]")
     sync_links(db, note_id=1, content="Link to [[target-slug]]")
     target = db.execute("SELECT * FROM notes WHERE slug = ?", ("target-slug",)).fetchone()
@@ -34,7 +34,6 @@ def test_sync_links_creates_placeholders(db):
 
 
 def test_sync_links_removes_stale_links(db):
-    from services.notes import create_note
     create_note(db, title="Source", content="[[a]] [[b]]")
     sync_links(db, note_id=1, content="[[a]] [[b]]")
     assert len(db.execute("SELECT * FROM links WHERE source_note_id = 1").fetchall()) == 2
@@ -45,7 +44,6 @@ def test_sync_links_removes_stale_links(db):
 
 
 def test_get_backlinks(db):
-    from services.notes import create_note
     create_note(db, title="A", slug="a")
     create_note(db, title="B", content="ref [[a]]")
     sync_links(db, note_id=2, content="ref [[a]]")
@@ -53,3 +51,14 @@ def test_get_backlinks(db):
     backlinks = get_backlinks(db, note_id=1)
     assert len(backlinks) == 1
     assert backlinks[0]["title"] == "B"
+
+
+def test_get_all_links(db):
+    create_note(db, title="A", slug="a")
+    create_note(db, title="B", content="see [[a]]")
+    sync_links(db, note_id=2, content="see [[a]]")
+
+    links = get_all_links(db)
+    assert len(links) == 1
+    assert links[0]["source"] == "b"
+    assert links[0]["target"] == "a"

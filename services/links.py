@@ -20,7 +20,6 @@ def sync_links(db, note_id: int, content: str):
                 "INSERT INTO notes (title, slug, content) VALUES (?, ?, '')",
                 (slug, slug)
             )
-            db.commit()
             target_id = db.execute("SELECT last_insert_rowid()").fetchone()[0]
         else:
             target_id = target["id"]
