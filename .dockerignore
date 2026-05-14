@@ -1,0 +1,13 @@
+.git/
+.gitignore
+*.db
+*.db-wal
+*.db-shm
+__pycache__/
+.pytest_cache/
+tests/
+docs/
+.superpowers/
+.claude/
+.DS_Store
+*.pyc
