@@ -17,9 +17,9 @@
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <link rel="stylesheet" href="/static/css/style.css">
 </head>
-<body>
+<body class="{% block body_class %}{% endblock %}">
     <aside class="sidebar">
-        <div class="sidebar-logo"></div>
+        <div class="sidebar-logo" aria-hidden="true"></div>
         <nav class="sidebar-nav" aria-label="主导航">
             <a href="/" class="sidebar-btn {{ 'active' if request.url.path == '/' else '' }}" title="首页" aria-current="{{ 'page' if request.url.path == '/' else 'false' }}">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
