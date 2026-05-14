@@ -108,3 +108,39 @@ def delete_note(db, note_id: int) -> bool:
     cursor = db.execute("DELETE FROM notes WHERE id = ?", (note_id,))
     db.commit()
     return cursor.rowcount > 0
+
+
+def set_note_tags(db, note_id: int, tag_names: list[str]):
+    """Replace all tags on a note with the given list of tag names."""
+    db.execute("DELETE FROM note_tags WHERE note_id = ?", (note_id,))
+
+    for name in tag_names:
+        name = name.strip().lower()
+        if not name:
+            continue
+        tag_slug = slugify(name)
+
+        tag = db.execute("SELECT id FROM tags WHERE slug = ?", (tag_slug,)).fetchone()
+        if tag is None:
+            db.execute("INSERT INTO tags (name, slug) VALUES (?, ?)", (name, tag_slug))
+            tag_id = db.execute("SELECT last_insert_rowid()").fetchone()[0]
+        else:
+            tag_id = tag["id"]
+
+        db.execute(
+            "INSERT OR IGNORE INTO note_tags (note_id, tag_id) VALUES (?, ?)",
+            (note_id, tag_id)
+        )
+
+    db.commit()
+
+
+def get_note_tags(db, note_id: int) -> list[dict]:
+    """Get all tags for a note."""
+    rows = db.execute("""
+        SELECT t.* FROM tags t
+        JOIN note_tags nt ON t.id = nt.tag_id
+        WHERE nt.note_id = ?
+        ORDER BY t.name
+    """, (note_id,)).fetchall()
+    return [dict(r) for r in rows]

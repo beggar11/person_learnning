@@ -13,3 +13,6 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(title="Knowledge Base", lifespan=lifespan)
 app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
+
+from routes import api
+app.include_router(api.router)
