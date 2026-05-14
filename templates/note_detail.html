@@ -2,13 +2,22 @@
 {% block title %}{{ note.title }} - Knowledge Base{% endblock %}
 {% block content %}
 
-<div class="note-content">
-    {{ note.html_content | safe if note.html_content else note.content }}
-</div>
+<div class="note-detail">
+    <a href="/" class="back-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+        返回
+    </a>
 
-<div style="margin-top: 24px;">
-    <a href="/note/{{ note.slug }}/edit" class="btn">编辑</a>
-    <button class="btn btn-ghost" onclick="if(confirm('删除？')){fetch('/api/notes/{{ note.id }}/delete',{method:'POST'}).then(()=>location.href='/')}">删除</button>
+    <h1 class="note-title">{{ note.title }}</h1>
+
+    <div class="prose">
+        {{ note.html_content | safe if note.html_content else note.content }}
+    </div>
+
+    <div class="actions">
+        <a href="/note/{{ note.slug }}/edit" class="btn">编辑</a>
+        <button class="btn btn-danger" onclick="if(confirm('确定删除？')){fetch('/api/notes/{{ note.id }}/delete',{method:'POST'}).then(()=>location.href='/')}">删除</button>
+    </div>
 </div>
 
 {% if backlinks %}
@@ -16,7 +25,7 @@
     <h3>链接到这里的笔记</h3>
     <div class="note-list" style="margin-top: 12px;">
         {% for bl in backlinks %}
-        <a href="/note/{{ bl.slug }}" class="note-item">
+        <a href="/note/{{ bl.slug }}" class="note-card">
             <h3>{{ bl.title }}</h3>
         </a>
         {% endfor %}
