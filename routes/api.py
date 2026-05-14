@@ -48,5 +48,7 @@ def api_graph(limit: int = 200):
 @router.post("/notes/{note_id}/delete")
 def api_delete(note_id: int):
     db = next(get_db())
-    delete_note(db, note_id)
+    deleted = delete_note(db, note_id)
+    if not deleted:
+        raise HTTPException(status_code=404, detail="Note not found")
     return {"status": "ok"}
