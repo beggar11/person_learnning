@@ -22,11 +22,11 @@ def render(name: str, **ctx) -> str:
 def page_index(request: Request, tag: str = None, db = Depends(get_db)):
     notes = get_all_notes(db, tag=tag)
     tags = db.execute("SELECT * FROM tags ORDER BY name").fetchall()
-    return render("index.html", notes=notes, tags=[dict(t) for t in tags], current_tag=tag)
+    return render("index.html", notes=notes, tags=[dict(t) for t in tags], current_tag=tag, request=request)
 
 @router.get("/note/new", response_class=HTMLResponse)
 def page_new_note(request: Request):
-    return render("note_edit.html", note=None)
+    return render("note_edit.html", note=None, request=request)
 
 @router.get("/note/{slug}", response_class=HTMLResponse)
 def page_note_detail(request: Request, slug: str, db = Depends(get_db)):
@@ -35,7 +35,7 @@ def page_note_detail(request: Request, slug: str, db = Depends(get_db)):
         return HTMLResponse("<h1>404 - Not Found</h1>", status_code=404)
     backlinks = get_backlinks(db, note["id"])
     note["html_content"] = render_markdown(note["content"])
-    return render("note_detail.html", note=note, backlinks=backlinks)
+    return render("note_detail.html", note=note, backlinks=backlinks, request=request)
 
 @router.get("/note/{slug}/edit", response_class=HTMLResponse)
 def page_note_edit(request: Request, slug: str, db = Depends(get_db)):
@@ -44,16 +44,16 @@ def page_note_edit(request: Request, slug: str, db = Depends(get_db)):
         return HTMLResponse("<h1>404 - Not Found</h1>", status_code=404)
     tags = get_note_tags(db, note["id"])
     note_tags = ",".join(t["name"] for t in tags)
-    return render("note_edit.html", note=note, note_tags=note_tags)
+    return render("note_edit.html", note=note, note_tags=note_tags, request=request)
 
 @router.get("/search", response_class=HTMLResponse)
 def page_search(request: Request, q: str = "", db = Depends(get_db)):
     results = search_notes(db, q) if q.strip() else []
-    return render("search_results.html", query=q, results=results)
+    return render("search_results.html", query=q, results=results, request=request)
 
 @router.get("/graph", response_class=HTMLResponse)
 def page_graph(request: Request):
-    return render("graph.html")
+    return render("graph.html", request=request)
 
 @router.get("/tag/{slug}", response_class=HTMLResponse)
 def page_tag(request: Request, slug: str, db = Depends(get_db)):
@@ -61,4 +61,4 @@ def page_tag(request: Request, slug: str, db = Depends(get_db)):
     tag_name = db.execute("SELECT name FROM tags WHERE slug = ?", (slug,)).fetchone()
     tag_name = tag_name["name"] if tag_name else slug
     tags = db.execute("SELECT * FROM tags ORDER BY name").fetchall()
-    return render("index.html", notes=notes, tags=[dict(t) for t in tags], current_tag=slug, tag_name=tag_name)
+    return render("index.html", notes=notes, tags=[dict(t) for t in tags], current_tag=slug, tag_name=tag_name, request=request)
