@@ -1,14 +1,14 @@
 import pytest
 from fastapi.testclient import TestClient
 from config import BASE_DIR
-from database import init_db, get_db
+from database import _connect, init_db
 
 @pytest.fixture
 def app():
-    import main
     test_db = BASE_DIR / "test_kb.db"
     import config
     config.DB_PATH = test_db
+    import main
     init_db()
     yield main.app
     if test_db.exists():
@@ -20,6 +20,6 @@ def client(app):
 
 @pytest.fixture
 def db(app):
-    conn = get_db()
+    conn = _connect()
     yield conn
     conn.close()

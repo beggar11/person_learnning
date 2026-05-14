@@ -1,11 +1,15 @@
+from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from config import STATIC_DIR
 from database import init_db
 
-app = FastAPI(title="Knowledge Base")
-app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
+STATIC_DIR.mkdir(parents=True, exist_ok=True)
 
-@app.on_event("startup")
-def startup():
+@asynccontextmanager
+async def lifespan(app: FastAPI):
     init_db()
+    yield
+
+app = FastAPI(title="Knowledge Base", lifespan=lifespan)
+app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")

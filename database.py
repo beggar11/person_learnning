@@ -1,15 +1,23 @@
 import sqlite3
 import config
 
-def get_db() -> sqlite3.Connection:
+def _connect() -> sqlite3.Connection:
     conn = sqlite3.connect(str(config.DB_PATH))
     conn.row_factory = sqlite3.Row
     conn.execute("PRAGMA journal_mode=WAL")
     conn.execute("PRAGMA foreign_keys=ON")
     return conn
 
+def get_db():
+    """FastAPI dependency: yields a DB connection and closes it after the request."""
+    conn = _connect()
+    try:
+        yield conn
+    finally:
+        conn.close()
+
 def init_db():
-    conn = get_db()
+    conn = _connect()
     conn.executescript("""
         CREATE TABLE IF NOT EXISTS notes (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
