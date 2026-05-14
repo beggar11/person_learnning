@@ -23,7 +23,7 @@
 {% if backlinks %}
 <div class="backlinks">
     <h3>链接到这里的笔记</h3>
-    <div class="note-list" style="margin-top: 12px;">
+    <div class="note-list">
         {% for bl in backlinks %}
         <a href="/note/{{ bl.slug }}" class="note-card">
             <h3>{{ bl.title }}</h3>
