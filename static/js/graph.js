@@ -2,6 +2,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const container = document.getElementById('graph-container');
     if (!container) return;
 
+    const isDark = document.documentElement.hasAttribute('data-theme');
+    const colors = {
+        node: '#3b82f6',
+        link: isDark ? '#475569' : '#d6d3d1',
+        label: isDark ? '#94a3b8' : '#78716c',
+    };
+
     const width = container.clientWidth;
     const height = container.clientHeight;
 
@@ -22,7 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 .selectAll('line')
                 .data(data.edges)
                 .join('line')
-                .attr('stroke', '#d6d3d1')
+                .attr('stroke', colors.link)
                 .attr('stroke-width', 1);
 
             const node = svg.append('g')
@@ -30,8 +37,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 .data(data.nodes)
                 .join('circle')
                 .attr('r', d => Math.max(4, Math.min(20, d.degree * 3 + 4)))
-                .attr('fill', '#2563eb')
+                .attr('fill', colors.node)
                 .attr('cursor', 'pointer')
+                .attr('stroke', isDark ? '#1e293b' : '#fff')
+                .attr('stroke-width', 1.5)
                 .on('click', (event, d) => {
                     window.location.href = '/note/' + d.slug;
                 })
@@ -49,7 +58,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 .attr('font-size', 10)
                 .attr('dx', 14)
                 .attr('dy', 4)
-                .attr('fill', '#78716c');
+                .attr('fill', colors.label)
+                .style('pointer-events', 'none');
 
             simulation.on('tick', () => {
                 link.attr('x1', d => d.source.x).attr('y1', d => d.source.y)
