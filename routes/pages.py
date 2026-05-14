@@ -1,9 +1,7 @@
-import re
-import mistune
 from fastapi import APIRouter, Request, Depends
 from fastapi.responses import HTMLResponse
 from database import get_db
-from services.notes import get_note_by_slug, get_all_notes, get_note_tags
+from services.notes import get_note_by_slug, get_all_notes, get_note_tags, render_markdown
 from services.links import get_backlinks
 from services.search import search_notes
 
@@ -64,16 +62,3 @@ def page_tag(request: Request, slug: str, db = Depends(get_db)):
     tag_name = tag_name["name"] if tag_name else slug
     tags = db.execute("SELECT * FROM tags ORDER BY name").fetchall()
     return render("index.html", notes=notes, tags=[dict(t) for t in tags], current_tag=slug, tag_name=tag_name)
-
-
-# Local render_markdown (not imported from services.notes to avoid circular deps)
-_md = mistune.create_markdown()
-
-def _render_markdown(content: str) -> str:
-    def replace_link(match):
-        slug = match.group(1)
-        return f'<a href="/note/{slug}" class="internal-link">{slug}</a>'
-    processed = re.sub(r'\[\[([^\]|]+?)(?:\|[^\]]+?)?\]\]', replace_link, content)
-    return _md(processed)
-
-render_markdown = _render_markdown

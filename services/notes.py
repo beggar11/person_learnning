@@ -144,3 +144,30 @@ def get_note_tags(db, note_id: int) -> list[dict]:
         ORDER BY t.name
     """, (note_id,)).fetchall()
     return [dict(r) for r in rows]
+
+
+import mistune as _mistune
+_md = _mistune.create_markdown()
+
+
+def render_markdown(content: str) -> str:
+    """Convert Markdown to HTML, turning [[wiki-links]] into proper <a> tags."""
+    def replace_link(match):
+        slug = match.group(1)
+        return f'<a href="/note/{slug}" class="internal-link">{slug}</a>'
+    processed = re.sub(r'\[\[([^\]|]+?)(?:\|[^\]]+?)?\]\]', replace_link, content)
+    return _md(processed)
+
+
+def upsert_tag(db, name: str) -> int:
+    """Get or create a tag by name. Returns the tag's id."""
+    name = name.strip()
+    if not name:
+        return None
+    slug = slugify(name)
+    row = db.execute("SELECT id FROM tags WHERE slug = ?", (slug,)).fetchone()
+    if row:
+        return row["id"]
+    db.execute("INSERT INTO tags (name, slug) VALUES (?, ?)", (name, slug))
+    db.commit()
+    return db.execute("SELECT last_insert_rowid()").fetchone()[0]
