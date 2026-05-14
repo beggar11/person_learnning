@@ -1,10 +1,17 @@
 {% extends "base.html" %}
 {% block title %}{{ tag_name or '首页' }} - Knowledge Base{% endblock %}
 {% block content %}
-<h2 style="margin-bottom: 20px;">{% if tag_name %}#{{ tag_name }}{% else %}最近笔记{% endif %}</h2>
+
+<div class="topbar">
+    <h2>{% if tag_name %}#{{ tag_name }}{% else %}最近笔记{% endif %}</h2>
+    <form action="/search" method="get" class="topbar-search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" name="q" placeholder="搜索笔记..." value="{{ query or '' }}">
+    </form>
+</div>
 
 {% if tags %}
-<div class="tag-cloud" style="margin-bottom: 24px;">
+<div class="tag-cloud">
     {% for t in tags %}
     <a href="/tag/{{ t.slug }}" class="tag">{{ t.name }}</a>
     {% endfor %}
@@ -12,9 +19,9 @@
 {% endif %}
 
 {% if notes %}
-<div class="note-list">
+<div class="note-grid">
     {% for note in notes %}
-    <a href="/note/{{ note.slug }}" class="note-item">
+    <a href="/note/{{ note.slug }}" class="note-card">
         <h3>{{ note.title }}</h3>
         <span class="meta">{{ note.updated_at[:10] }}{% if not note.content %} · 草稿{% endif %}</span>
     </a>
@@ -23,4 +30,5 @@
 {% else %}
 <div class="empty">还没有笔记，<a href="/note/new">写一篇</a></div>
 {% endif %}
+
 {% endblock %}
