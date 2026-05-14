@@ -1,0 +1,76 @@
+<h2>整体架构</h2>
+<p class="subtitle">Python FastAPI + SQLite + Jinja2 + 轻量前端 JS</p>
+
+<div class="mockup">
+  <div class="mockup-header">系统架构总览</div>
+  <div class="mockup-body" style="padding: 20px; font-family: monospace; font-size: 14px; line-height: 1.6;">
+
+    <div style="text-align: center; margin-bottom: 24px;">
+      <span style="background: var(--accent); color: white; padding: 6px 16px; border-radius: 4px; font-size: 12px;">Browser</span>
+    </div>
+
+    <div style="display: flex; justify-content: center; gap: 16px; margin-bottom: 16px;">
+      <div style="border: 1px solid var(--border); border-radius: 8px; padding: 12px; text-align: center; flex: 1; max-width: 200px;">
+        <div style="font-size: 11px; color: var(--muted); margin-bottom: 4px;">Jinja2 模板</div>
+        <div>页面 / 列表 / 图谱</div>
+      </div>
+      <div style="border: 1px solid var(--border); border-radius: 8px; padding: 12px; text-align: center; flex: 1; max-width: 200px;">
+        <div style="font-size: 11px; color: var(--muted); margin-bottom: 4px;">少量 JS</div>
+        <div>Markdown 编辑器<br>图谱交互<br>HTMX 风格局部刷新</div>
+      </div>
+    </div>
+
+    <div style="text-align: center; margin: 16px 0;">
+      <span style="font-size: 11px; color: var(--muted);">HTTP / JSON / HTML</span>
+    </div>
+
+    <div style="text-align: center; margin-bottom: 16px;">
+      <span style="background: var(--accent); color: white; padding: 6px 16px; border-radius: 4px; font-size: 12px;">FastAPI Server</span>
+    </div>
+
+    <div style="display: flex; justify-content: center; gap: 16px; margin-bottom: 16px;">
+      <div style="border: 1px solid var(--border); border-radius: 8px; padding: 12px; text-align: center; flex: 1; max-width: 180px;">
+        <div style="font-size: 11px; color: var(--muted); margin-bottom: 4px;">路由 &amp; API</div>
+        <div>笔记 CRUD<br>搜索接口<br>图谱数据</div>
+      </div>
+      <div style="border: 1px solid var(--border); border-radius: 8px; padding: 12px; text-align: center; flex: 1; max-width: 180px;">
+        <div style="font-size: 11px; color: var(--muted); margin-bottom: 4px;">核心逻辑</div>
+        <div>Markdown 解析<br>双向链接提取<br>全文索引</div>
+      </div>
+    </div>
+
+    <div style="text-align: center; margin: 16px 0;">
+      <span style="font-size: 11px; color: var(--muted);">SQL</span>
+    </div>
+
+    <div style="text-align: center; margin-bottom: 8px;">
+      <span style="background: var(--accent); color: white; padding: 6px 16px; border-radius: 4px; font-size: 12px;">SQLite + FTS5</span>
+    </div>
+
+    <div style="display: flex; justify-content: center; gap: 16px;">
+      <div style="border: 1px solid var(--border); border-radius: 8px; padding: 8px 12px; font-size: 13px;">notes 表</div>
+      <div style="border: 1px solid var(--border); border-radius: 8px; padding: 8px 12px; font-size: 13px;">links 表</div>
+      <div style="border: 1px solid var(--border); border-radius: 8px; padding: 8px 12px; font-size: 13px;">tags 表</div>
+      <div style="border: 1px solid var(--border); border-radius: 8px; padding: 8px 12px; font-size: 13px;">fts 索引表</div>
+    </div>
+
+  </div>
+</div>
+
+<div class="section" style="margin-top: 24px;">
+  <h3>技术选型</h3>
+  <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
+    <tr style="border-bottom: 1px solid var(--border);"><td style="padding: 8px 0; font-weight: 600;">Web 框架</td><td style="padding: 8px 0;">FastAPI</td></tr>
+    <tr style="border-bottom: 1px solid var(--border);"><td style="padding: 8px 0; font-weight: 600;">数据库</td><td style="padding: 8px 0;">SQLite + FTS5 全文搜索</td></tr>
+    <tr style="border-bottom: 1px solid var(--border);"><td style="padding: 8px 0; font-weight: 600;">模板引擎</td><td style="padding: 8px 0;">Jinja2</td></tr>
+    <tr style="border-bottom: 1px solid var(--border);"><td style="padding: 8px 0; font-weight: 600;">Markdown 编辑</td><td style="padding: 8px 0;">EasyMDE / Milkdown（前端组件）</td></tr>
+    <tr style="border-bottom: 1px solid var(--border);"><td style="padding: 8px 0; font-weight: 600;">知识图谱</td><td style="padding: 8px 0;">D3-force 或 vis.js network</td></tr>
+    <tr style="border-bottom: 1px solid var(--border);"><td style="padding: 8px 0; font-weight: 600;">ORM</td><td style="padding: 8px 0;">SQLAlchemy 或直接用 aiosqlite</td></tr>
+    <tr><td style="padding: 8px 0; font-weight: 600;">部署</td><td style="padding: 8px 0;">Docker / systemd / 或直接运行</td></tr>
+  </table>
+</div>
+
+<div class="section">
+  <h3>核心理念</h3>
+  <p>不做 SPA。每个页面由 FastAPI 用 Jinja2 渲染 HTML，仅在需要客户端交互的地方（编辑器、图谱、搜索建议）用少量 JS 增强。这避免了前后端分离的复杂性，保持项目的小巧和可维护性。</p>
+</div>

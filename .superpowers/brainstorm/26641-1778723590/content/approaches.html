@@ -1,0 +1,81 @@
+<h2>三种架构方案对比</h2>
+<p class="subtitle">全栈 Web 应用，支持 Markdown 编辑、双向链接、知识图谱、全文搜索</p>
+
+<div class="options">
+  <div class="option" data-choice="a" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>Next.js 全栈（推荐）</h3>
+      <p>React + Next.js API Routes + PostgreSQL</p>
+      <div class="pros-cons" style="margin-top: 12px;">
+        <div class="pros"><h4>Pros</h4>
+          <ul>
+            <li>前后端一个项目，开发部署简单</li>
+            <li>React 生态丰富：编辑器、图谱组件多</li>
+            <li>部署选择多（Vercel/自托管/Docker）</li>
+            <li>SSR 可选，首屏加载快</li>
+          </ul>
+        </div>
+        <div class="cons"><h4>Cons</h4>
+          <ul>
+            <li>Next.js 有些约定学习成本</li>
+            <li>重度交互场景需关注 bundle size</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="b" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>前后端分离</h3>
+      <p>React SPA + Node.js/Express REST API + PostgreSQL</p>
+      <div class="pros-cons" style="margin-top: 12px;">
+        <div class="pros"><h4>Pros</h4>
+          <ul>
+            <li>前后端解耦，各自独立开发</li>
+            <li>后端可独立扩展或替换</li>
+            <li>职责分离清晰</li>
+          </ul>
+        </div>
+        <div class="cons"><h4>Cons</h4>
+          <ul>
+            <li>两个项目，部署更重</li>
+            <li>需要处理 CORS、前后端类型同步</li>
+            <li>对于个人项目来说过度工程化</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="c" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>轻量型</h3>
+      <p>Python FastAPI + Jinja2 模板 + SQLite</p>
+      <div class="pros-cons" style="margin-top: 12px;">
+        <div class="pros"><h4>Pros</h4>
+          <ul>
+            <li>简单直接，无需前端构建工具链</li>
+            <li>SQLite 零配置，备份就是一个文件</li>
+            <li>Python 做全文搜索和 NLP 有优势</li>
+          </ul>
+        </div>
+        <div class="cons"><h4>Cons</h4>
+          <ul>
+            <li>Markdown 编辑器和图谱可视化需要用 JS，两边混写体验差</li>
+            <li>交互体验（拖拽、实时预览）不如 React SPA</li>
+            <li>项目大了容易乱</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section" style="margin-top: 24px;">
+  <h3>推荐理由</h3>
+  <p><strong>方案 A</strong> 最适合你的场景：一个项目搞定全栈，React 生态对 Markdown 编辑器和知识图谱这种交互密集型功能天然友好，部署也能一键 Vercel 或 Docker。方案 B 是方案 A 拆开后的形态——对个人项目过度了。方案 C 写传统的 CRUD 页面很好，但你要的知识图谱和双向链接编辑器在 React 生态里有现成的成熟方案可用。</p>
+</div>

@@ -1,0 +1,74 @@
+<h2>页面结构</h2>
+<p class="subtitle">6 个页面，围绕笔记的创建、阅读、关联、发现</p>
+
+<div class="section">
+  <h3>页面清单</h3>
+  <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
+    <tr style="border-bottom: 1px solid var(--border);">
+      <td style="padding: 10px 0; font-weight: 600; width: 120px;">/</td>
+      <td style="padding: 10px 0;"><strong>首页 / 笔记列表</strong></td>
+      <td style="padding: 10px 0; color: var(--muted);">最近更新的笔记列表，按时间/标签筛选，搜索入口</td>
+    </tr>
+    <tr style="border-bottom: 1px solid var(--border);">
+      <td style="padding: 10px 0; font-weight: 600;">/note/{slug}</td>
+      <td style="padding: 10px 0;"><strong>笔记详情</strong></td>
+      <td style="padding: 10px 0; color: var(--muted);">渲染后的 Markdown 内容，双向链接高亮，反向链接列表</td>
+    </tr>
+    <tr style="border-bottom: 1px solid var(--border);">
+      <td style="padding: 10px 0; font-weight: 600;">/note/{slug}/edit</td>
+      <td style="padding: 10px 0;"><strong>编辑笔记</strong></td>
+      <td style="padding: 10px 0; color: var(--muted);">Markdown 编辑器 + 实时预览，标签管理，保存时自动解析链接</td>
+    </tr>
+    <tr style="border-bottom: 1px solid var(--border);">
+      <td style="padding: 10px 0; font-weight: 600;">/graph</td>
+      <td style="padding: 10px 0;"><strong>知识图谱</strong></td>
+      <td style="padding: 10px 0; color: var(--muted);">力导向图，节点=笔记，边=链接，点击节点跳转笔记</td>
+    </tr>
+    <tr style="border-bottom: 1px solid var(--border);">
+      <td style="padding: 10px 0; font-weight: 600;">/search?q=</td>
+      <td style="padding: 10px 0;"><strong>搜索结果</strong></td>
+      <td style="padding: 10px 0; color: var(--muted);">FTS5 全文搜索，高亮匹配片段</td>
+    </tr>
+    <tr>
+      <td style="padding: 10px 0; font-weight: 600;">/tag/{slug}</td>
+      <td style="padding: 10px 0;"><strong>标签页面</strong></td>
+      <td style="padding: 10px 0; color: var(--muted);">该标签下的所有笔记列表</td>
+    </tr>
+  </table>
+</div>
+
+<div class="mockup">
+  <div class="mockup-header">导航流示意</div>
+  <div class="mockup-body" style="padding: 16px;">
+    <div class="mock-nav" style="margin-bottom: 12px;">🔍 搜索框 &nbsp;|&nbsp; 笔记 &nbsp;|&nbsp; 图谱 &nbsp;|&nbsp; + 新建</div>
+    <div style="display: flex; gap: 16px;">
+      <div class="mock-content" style="flex: 1; min-height: 140px; font-size: 13px;">
+        <strong>/ (首页)</strong><br>
+        ▸ 笔记列表（卡片或表格）<br>
+        ▸ 按时间倒序<br>
+        ▸ 右侧标签云<br>
+        ▸ 点击 → /note/{slug}
+      </div>
+      <div class="mock-content" style="flex: 1; min-height: 140px; font-size: 13px;">
+        <strong>/note/{slug} (详情)</strong><br>
+        ▸ 渲染 Markdown<br>
+        ▸ [[链接]] 可点击<br>
+        ▸ 底部：反向链接<br>
+        ▸ 编辑按钮 → /note/{slug}/edit
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>路由设计</h3>
+  <pre style="background: var(--bg-muted); padding: 12px; border-radius: 6px; font-size: 13px; overflow-x: auto;">
+GET  /                    → 首页（笔记列表）
+GET  /note/{slug}         → 笔记详情（渲染）
+GET  /note/{slug}/edit    → 编辑页面
+POST /api/notes           → 创建/更新笔记（JSON API）
+GET  /api/notes           → 笔记列表（JSON，供搜索/筛选）
+GET  /api/graph           → 图谱数据（节点+边 JSON）
+GET  /search?q=...        → 搜索结果页
+GET  /tag/{slug}          → 标签页</pre>
+</div>

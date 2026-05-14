@@ -1,0 +1,73 @@
+<h2>数据模型</h2>
+<p class="subtitle">SQLite 表结构，FTS5 全文索引，双向链接关系</p>
+
+<div class="section">
+  <h3>核心表</h3>
+  <table style="width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 16px;">
+    <tr style="border-bottom: 1px solid var(--border);">
+      <td style="padding: 8px 0; font-weight: 600; vertical-align: top;">notes</td>
+      <td style="padding: 8px 0;">
+        <code>id</code>, <code>title</code>, <code>slug</code> (唯一链接标识), <code>content</code> (Markdown), <code>created_at</code>, <code>updated_at</code>
+      </td>
+    </tr>
+    <tr style="border-bottom: 1px solid var(--border);">
+      <td style="padding: 8px 0; font-weight: 600; vertical-align: top;">links</td>
+      <td style="padding: 8px 0;">
+        <code>id</code>, <code>source_note_id</code>, <code>target_note_id</code>（从 [[wiki-link]] 解析而来），<code>created_at</code>
+      </td>
+    </tr>
+    <tr style="border-bottom: 1px solid var(--border);">
+      <td style="padding: 8px 0; font-weight: 600; vertical-align: top;">tags</td>
+      <td style="padding: 8px 0;">
+        <code>id</code>, <code>name</code>, <code>slug</code>
+      </td>
+    </tr>
+    <tr style="border-bottom: 1px solid var(--border);">
+      <td style="padding: 8px 0; font-weight: 600; vertical-align: top;">note_tags</td>
+      <td style="padding: 8px 0;">
+        <code>note_id</code>, <code>tag_id</code>（多对多关联表）
+      </td>
+    </tr>
+    <tr>
+      <td style="padding: 8px 0; font-weight: 600; vertical-align: top;">notes_fts</td>
+      <td style="padding: 8px 0;">
+        FTS5 虚拟表，索引 <code>title</code> + <code>content</code>，支持中文分词
+      </td>
+    </tr>
+  </table>
+</div>
+
+<div class="mockup">
+  <div class="mockup-header">ER 关系图</div>
+  <div class="mockup-body" style="padding: 20px; font-family: monospace; font-size: 13px; line-height: 1.8; text-align: center;">
+    <div style="display: inline-block; border: 1px solid var(--accent); border-radius: 8px; padding: 10px 20px; margin: 8px;">
+      <strong>notes</strong><br>
+      id · title · slug<br>content · dates
+    </div>
+    <br>
+    <span style="color: var(--muted); font-size: 12px;">│ 1:N (source) &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; │ N:M &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; │</span>
+    <br>
+    <div style="display: inline-block; border: 1px solid var(--border); border-radius: 8px; padding: 8px 16px; margin: 8px; vertical-align: top;">
+      <strong>links</strong><br>
+      source → target
+    </div>
+    <div style="display: inline-block; border: 1px solid var(--border); border-radius: 8px; padding: 8px 16px; margin: 8px; vertical-align: top; width: 20px;">&nbsp;</div>
+    <div style="display: inline-block; border: 1px solid var(--border); border-radius: 8px; padding: 8px 16px; margin: 8px; vertical-align: top;">
+      <strong>note_tags</strong><br>
+      note_id · tag_id
+    </div>
+    <div style="display: inline-block; border: 1px solid var(--border); border-radius: 8px; padding: 8px 16px; margin: 8px; vertical-align: top;">
+      <strong>tags</strong><br>
+      id · name
+    </div>
+  </div>
+</div>
+
+<div class="section" style="margin-top: 24px;">
+  <h3>关键设计决策</h3>
+  <ol style="line-height: 1.8;">
+    <li><strong>links 表来自动解析</strong>——保存笔记时，后端正则提取 <code>[[slug]]</code>，自动维护 links 表。不需要用户手动建立链接。</li>
+    <li><strong>slug 唯一标识</strong>——笔记用 slug（URL 友好的简短标识）而非 ID 来引用。这样 <code>[[machine-learning]]</code> 可以直接解析到对应笔记，无论它在系统中的 ID 是什么。</li>
+    <li><strong>FTS5 支持中文</strong>——SQLite 原生的 FTS5 需要配合分词器（jieba 或 simple tokenizer）。保存时同步更新 FTS 索引。</li>
+  </ol>
+</div>

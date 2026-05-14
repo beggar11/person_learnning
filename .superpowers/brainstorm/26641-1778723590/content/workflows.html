@@ -1,0 +1,102 @@
+<h2>核心工作流 &amp; 技术要点</h2>
+
+<div class="section">
+  <h3>1. 笔记保存 → 链接解析流程</h3>
+  <div class="mockup">
+    <div class="mockup-header">保存时发生什么</div>
+    <div class="mockup-body" style="padding: 16px; font-family: monospace; font-size: 13px; line-height: 1.8;">
+      编辑器提交 Markdown 内容
+      <span style="color: var(--muted);">→</span>
+      正则提取所有 <code>[[target-slug]]</code>
+      <span style="color: var(--muted);">→</span>
+      查找/创建目标笔记占位
+      <span style="color: var(--muted);">→</span>
+      更新 links 表（删旧写新）
+      <span style="color: var(--muted);">→</span>
+      更新 FTS 索引
+      <span style="color: var(--muted);">→</span>
+      保存笔记
+    </div>
+  </div>
+  <p style="font-size: 13px; color: var(--muted); margin-top: 8px;">关键：链接对应关系完整存储在 links 表中，所以反向链接查询只需一次 SQL JOIN，不需要每次遍历全文。</p>
+</div>
+
+<div class="section">
+  <h3>2. 知识图谱渲染</h3>
+  <div class="mockup">
+    <div class="mockup-header">图谱页面数据流</div>
+    <div class="mockup-body" style="padding: 16px; font-size: 13px; line-height: 1.8;">
+      GET /api/graph
+      <span style="color: var(--muted);">→</span>
+      返回 <code>{nodes: [{id, title, slug}], edges: [{source, target}]}</code>
+      <span style="color: var(--muted);">→</span>
+      前端 D3-force 布局
+      <span style="color: var(--muted);">→</span>
+      节点大小 = 链接数量（度中心性）
+      <span style="color: var(--muted);">→</span>
+      点击节点 → 跳转 /note/{slug}
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>3. 全文搜索</h3>
+  <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
+    <tr style="border-bottom: 1px solid var(--border);">
+      <td style="padding: 8px 0; font-weight: 600; width: 120px;">中文分词</td>
+      <td style="padding: 8px 0;">jieba 分词后写入 FTS5，或使用 simple tokenizer（按字符 bigram）作为轻量替代</td>
+    </tr>
+    <tr style="border-bottom: 1px solid var(--border);">
+      <td style="padding: 8px 0; font-weight: 600;">结果排序</td>
+      <td style="padding: 8px 0;">FTS5 bm25 权重，标题匹配权重高于正文</td>
+    </tr>
+    <tr>
+      <td style="padding: 8px 0; font-weight: 600;">高亮展示</td>
+      <td style="padding: 8px 0;">FTS5 snippet() 函数返回带标记的片段，前端渲染</td>
+    </tr>
+  </table>
+</div>
+
+<div class="section">
+  <h3>4. 错误处理 &amp; 边界情况</h3>
+  <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
+    <tr style="border-bottom: 1px solid var(--border);">
+      <td style="padding: 8px 0; font-weight: 600; width: 160px;">链接目标不存在</td>
+      <td style="padding: 8px 0;">渲染时显示为红色虚线链接，点击可快速创建占位笔记</td>
+    </tr>
+    <tr style="border-bottom: 1px solid var(--border);">
+      <td style="padding: 8px 0; font-weight: 600;">slug 重复</td>
+      <td style="padding: 8px 0;">保存时检查，若重复自动追加 -2, -3 后缀</td>
+    </tr>
+    <tr style="border-bottom: 1px solid var(--border);">
+      <td style="padding: 8px 0; font-weight: 600;">空内容笔记</td>
+      <td style="padding: 8px 0;">允许创建，作为占位符。在列表中标记为「草稿」</td>
+    </tr>
+    <tr style="border-bottom: 1px solid var(--border);">
+      <td style="padding: 8px 0; font-weight: 600;">图谱节点过多</td>
+      <td style="padding: 8px 0;">默认显示最近 N 个节点或限制深度，提供过滤器</td>
+    </tr>
+    <tr>
+      <td style="padding: 8px 0; font-weight: 600;">数据库备份</td>
+      <td style="padding: 8px 0;">SQLite 单文件，定期复制即可备份；提供导出按钮</td>
+    </tr>
+  </table>
+</div>
+
+<div class="section">
+  <h3>5. 测试策略</h3>
+  <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
+    <tr style="border-bottom: 1px solid var(--border);">
+      <td style="padding: 8px 0; font-weight: 600; width: 120px;">单元测试</td>
+      <td style="padding: 8px 0;">链接解析（正则提取 [[link]]）、slug 生成、Markdown 渲染</td>
+    </tr>
+    <tr style="border-bottom: 1px solid var(--border);">
+      <td style="padding: 8px 0; font-weight: 600;">集成测试</td>
+      <td style="padding: 8px 0;">FastAPI TestClient：CRUD 笔记、搜索、图谱 API</td>
+    </tr>
+    <tr>
+      <td style="padding: 8px 0; font-weight: 600;">前端测试</td>
+      <td style="padding: 8px 0;">保持简单——手工验证编辑器、图谱交互，不引入前端测试框架</td>
+    </tr>
+  </table>
+</div>
